@@ -1,30 +1,18 @@
-const path = require('path');
 const express = require("express");
+const path = require("path");
+var admin = require("firebase-admin");
+var serviceAccount = require("square-piece-firebase-adminsdk-3ok7a-7a389b0d87.json");
+
 const app = express();
-const port = 3000;
-const http = require("http").createServer(app);
 
-const io = require("socket.io")(http);
+app.use("/static", express.static(path.resolve(__dirname, "public", "static")));
 
-app.use(express.static(path.join(__dirname, 'public')));
-
-io.on("connection", (socket) => {
-    //to client
-    socket.emit("welcome", "hello from server");
-    console.log("client connected")
-
-    //to all client except one connecting
-    socket.broadcast.emit("message", "a user joined");
-    
-    //to all clients
-    //io.emit();
-
-    //disconnect
-    socket.on('disconnect', () => {
-        io.emit("message", "a user left");
-    });
+app.get("/*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "public", "index.html"));
 });
 
-http.listen(port, () =>{
-    console.log("Server listening");
+app.listen(process.env.PORT || 3000, () => console.log("Server up"));
+
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
 });

@@ -1,18 +1,43 @@
 const express = require("express");
+const cookieParser = require("cookie-parser");
 const path = require("path");
+const csrf = require("csurf");
 var admin = require("firebase-admin");
-var serviceAccount = require("square-piece-firebase-adminsdk-3ok7a-7a389b0d87.json");
+var serviceAccount = require("./square-piece-firebase-adminsdk-3ok7a-7a389b0d87.json");
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+});
+
+const csrfMiddleware = csrf({
+    cookie: true
+});
 
 const app = express();
 
-app.use("/static", express.static(path.resolve(__dirname, "public", "static")));
+app.engine("html", require("ejs").renderFile);
+app.use(express.static("public"));
 
-app.get("/*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "public", "index.html"));
+app.use(cookieParser());
+app.use(csrfMiddleware);
+
+app.all("*", (req, res, next) => {
+    res.cookie("XSRF-TOKEN", req.csrfToken());
+    next();
 });
 
-app.listen(process.env.PORT || 3000, () => console.log("Server up"));
+app.get("/", function (req, res) {
+    res.render("index.html");
+});
+app.get("/account", function (req, res) {
+    res.render("account.html");
+});
+app.get("/play", function (req, res) {
+    res.render("play.html");
+});
+app.use(function (req, res, next) {
+    res.render("../public/404.html");
+});
 
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
+app.listen(process.env.PORT || 3000, () => {
+    console.log("Server up")
 });

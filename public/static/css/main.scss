@@ -44,6 +44,10 @@ h2 {
     font-size: 2rem;
 }
 
+p {
+    padding-top: 10px;
+    line-height: 20px;
+}
 .sidebar {
     display: flex;
     flex: 1;
@@ -68,13 +72,13 @@ h2 {
 }
 
 .form {
-    width: 100%;
+    width: 30%;
     height: $width/5;
     overflow: hidden;
     position: relative;
 }
 
-label {
+#field-label {
     position: absolute;
     top: $width/15;
     color: rgba(black, 0.5);
@@ -83,7 +87,7 @@ label {
     transition: .25s ease;
 }
 
-input {
+.field-input {
     display: block;
     width: 250px;
     padding-top: $width/15;
@@ -98,7 +102,7 @@ input {
     &:focus {
         outline: none;
 
-        ~label {
+        ~#field-label {
             top: 1px;
             padding-left: 3px;
             font: 700 $width/25 Roboto;
@@ -112,7 +116,7 @@ input {
 }
 
 .touched:required:valid {
-    ~label {
+    ~#field-label {
         top: 1px;
         padding-left: 3px;
         font: 700 $width/25 Roboto;
@@ -121,7 +125,7 @@ input {
 }
 
 .touched:required:invalid {
-    ~label {
+    ~#field-label {
         top: 1px;
         padding-left: 3px;
         font: 700 $width/25 Roboto;
@@ -169,7 +173,7 @@ canvas {
 .link {
     transition: color 0.3s;
     position: absolute;
-    line-height: 1.5;
+    line-height: 20px;
 }
 
 .link:hover,

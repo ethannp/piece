@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+
+<head>
+  <title>Home</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/main.css">
+  <script>
+    $(function () {
+      $.getScript('/static/js/auth.js');
+      $.getScript('/static/js/play.js');
+    });
+  </script>
+</head>
+
+<body>
+  <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-firestore.js"></script>
+  <main>
+    <section class="glass">
+      <div class="content" id="play" hidden>
+        <h2>Play</h2>
+        <div id="info">
+          <p>Once you push start, an empty canvas and the piece that you will draw will appear. Please try to recreate
+            the image to the best of your ability! A countdown for 100 seconds will appear, and at the end of the timer,
+            your piece will automatically submit. There is no way to pause this timer!</p>
+          <p>You will have the option to change your brush size and color. Use the white color to erase.</p>
+          <p>Drawing inappropriate or irrelevant content will get your account permanently banned.</p>
+          <p>Are you ready?</p>
+          <br>
+          <a class="button" id="start">I have read everything above, let's go!</a>
+          <br>
+          <a class="button" href="/">Take me back home</a>
+        </div>
+        <div id="game" hidden>
+          <br>
+          <div id="refpic">
+          </div>
+          <div id="div-canv">
+            <canvas id="canvDraw" width="300" height="300"></canvas>
+          </div>
+          <style>
+            #butts div {
+              float: left;
+              width: 30px;
+              height: 30px;
+            }
+
+            #circle {
+              border-radius: 100px;
+            }
+          </style>
+          <div id="butts">
+            <div
+              style="border-radius: 7px;background:rgb(214, 214, 214);border:2px solid black;position:relative;margin-right:10px"
+              id="change" onclick="size()">
+              <div style="position:absolute;width:7px; height:7px; background:black;top:10px;left:10px" id="circle">
+              </div>
+            </div>
+            <div style="background:red;border-radius: 7px;" id="red" onclick="color(this)"></div>
+            <div style="background:orange;border-radius: 7px;" id="orange" onclick="color(this)"></div>
+            <div style="background:yellow;border-radius: 7px;" id="yellow" onclick="color(this)"></div>
+            <div style="background:lime;border-radius: 7px;" id="lime" onclick="color(this)"></div>
+            <div style="background:green;border-radius: 7px;" id="green" onclick="color(this)"></div>
+            <div style="background:aqua;border-radius: 7px;" id="aqua" onclick="color(this)"></div>
+            <div style="background:blue;border-radius: 7px;" id="blue" onclick="color(this)"></div>
+            <div style="background:purple;border-radius: 7px;" id="purple" onclick="color(this)"></div>
+            <div style="background:hotpink;border-radius: 7px;" id="hotpink" onclick="color(this)"></div>
+            <div style="background:black;border-radius: 7px;" id="black" onclick="color(this)"></div>
+            <div style="background:white;border-radius: 7px;" id="white" onclick="color(this)"></div>
+          </div>
+          <br><br>
+          <a class="button">Submit</a>
+          <style>
+            h4 {
+              color: rgba(0, 0, 0, 0.6);
+            }
+          </style>
+          <input type='checkbox' id="hidetimer">
+          <label for="hidetimer">Hide timer - your piece will still be automatically submitted</label>
+          <h4 id="autosubmit">Your piece will be autosubmitted in 100 seconds.</h4>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+
+</html>

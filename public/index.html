@@ -4,17 +4,12 @@
   <title>Home</title>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <script src="/__/firebase/8.2.3/firebase-app.js"></script>
-  <script src="/__/firebase/init.js?useEmulator=true'"></script>
-  <script src="/__/firebase/8.2.3/firebase-auth.js"></script>
-  <script src="/__/firebase/8.2.3/firebase-firestore.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/static/css/main.css">
   <script>
     $(function () {
       $(".sidebar").load("base.html", null, function () {
-        $.getScript('/static/js/draw.js');
         $.getScript('/static/js/pfp.js');
         $.getScript('/static/js/auth.js');
       });
@@ -23,14 +18,24 @@
 </head>
 
 <body>
+  <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-firestore.js"></script>
   <main>
     <section class="glass">
       <div class="sidebar"></div>
       <div class="content">
-        <div id="refpic">
+        <h1>Welcome to Piece!</h1>
+        <p>Piece is a collaborative art project in which users get a small 'piece' of a larger image to redraw. These images will then be recombined with other user's pieces to create one large image. </p>
+        <div id="loggedin">
+          <br>
+          <a class="button" href="play.html">Play</a>
+          <a class="button" href="guess.html">Guess</a>
         </div>
-        <div id="div-canv">
-          <canvas id="canvDraw" width="300" height="300"></canvas>
+        <div id="notloggedin" hidden>
+          <p>You may guess what other's artwork is without an account, however if you would like to submit your own art, please <a class="link" href="account.html">log&nbsp;in&nbsp;here</a>!</p>
+          <br>
+          <a class="button" href="guess.html">Guess</a>
         </div>
       </div>
     </section>

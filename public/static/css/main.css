@@ -90,6 +90,7 @@ p {
 
 .form {
   width: 30%;
+  min-width: 200px;
   height: 60px;
   overflow: hidden;
   position: relative;
@@ -255,10 +256,23 @@ canvas {
   cursor: pointer;
 }
 
-@media all and (max-width: 30em) {
-  .button {
+@media screen and (min-width: 600px) {
+  #mobile {
+    visibility: hidden;
+    display: none;
+  }
+  #info {
+    visibility: visible;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  #mobile {
+    visibility: visible;
     display: block;
-    margin: 0.4em auto;
+  }
+  #info {
+    visibility: hidden;
   }
 }
 

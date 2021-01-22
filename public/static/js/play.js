@@ -38,31 +38,36 @@ StrokeStore.prototype.lineTo = function (x, y, color, size) {
     this.current.push({
         x: x,
         y: y,
-        color: color,
-        size: size
+        c: color,
+        s: size
     });
 };
 
 StrokeStore.prototype.stroke = function (ctx) {
     ctxDraw.beginPath();
     var color = "black";
+    var size = 2;
     var count = 0;
+    ctxDraw.lineCap='round';
     this.store.forEach(function (line) {
+        scale = canvasDraw.width / 400;
         if (count == 0) {
-            color = line[1].color;
+            color = line[1].c;
+            size = line[1].s;
             ctxDraw.strokeStyle = color;
+            ctxDraw.lineWidth = size * scale;
         }
-        if (color != line[1].color) {
+        if (color != line[1].color || size != line[1].size) {
             ctxDraw.stroke();
-            color = line[1].color;
+            color = line[1].c;
+            size = line[1].s;
+            ctxDraw.lineWidth = size * scale;
             ctxDraw.strokeStyle = color;
             ctxDraw.beginPath();
         }
-        scale = canvasDraw.width / 300;
         ctxDraw.moveTo(line[0].x * scale, line[0].y * scale);
         var pt;
         pt = line[1];
-        ctxDraw.lineWidth = line[1].size * scale;
         ctxDraw.lineTo(pt.x * scale, pt.y * scale);
         count++;
     }, this);
@@ -76,6 +81,7 @@ $(function () {
     $('#start').click(start);
     $('#hidetimer').click(toggleTimer);
     $('#submit').click(submit);
+    window.canv=-1;
     canvDraw();
 });
 
@@ -100,7 +106,7 @@ function canvDraw() {
 }
 
 function resizeCanvas() {
-    if (window.innerWidth / 4 > 180 && window.innerWidth / 4 < 300) {
+    if (window.innerWidth / 4 > 180 && window.innerWidth / 4 < 400) {
         ctxDraw.canvas.width = window.innerWidth / 4;
         ctxDraw.canvas.height = ctxDraw.canvas.width;
     }
@@ -108,9 +114,9 @@ function resizeCanvas() {
         ctxDraw.canvas.width = 180;
         ctxDraw.canvas.height = 180;
     }
-    if (window.innerWidth / 4 >= 300) {
-        ctxDraw.canvas.width = 300;
-        ctxDraw.canvas.height = 300;
+    if (window.innerWidth / 4 >= 400) {
+        ctxDraw.canvas.width = 400;
+        ctxDraw.canvas.height = 400;
     }
     redraw();
 }
@@ -122,7 +128,7 @@ function redraw() {
 }
 
 function draw() {
-    scale = canvasDraw.width / 300;
+    scale = canvasDraw.width / 400;
     ctxDraw.lineCap='round';
     ctxDraw.lineWidth =siz * scale;
     ctxDraw.beginPath();
@@ -131,9 +137,9 @@ function draw() {
     ctxDraw.strokeStyle = col;
     ctxDraw.stroke();
     ctxDraw.closePath();
-    scale = 300 / canvasDraw.width;
-    strokes.moveTo(prevX * scale, prevY * scale);
-    strokes.lineTo(currX * scale, currY * scale, col, siz);
+    scale = 400 / canvasDraw.width;
+    strokes.moveTo((prevX * scale).toFixed(1), (prevY * scale).toFixed(1));
+    strokes.lineTo((currX * scale).toFixed(1), (currY * scale).toFixed(1), col, siz);
 }
 
 
@@ -172,7 +178,7 @@ function start() {
     document.getElementById("info").hidden = true;
     document.getElementById("game").hidden = false;
     const timer = document.getElementById("autosubmit");
-    var end = Date.now() + 100000;
+    var end = Date.now() + 120000;
     var count = setInterval(function () {
         var now = new Date().getTime();
         var timeLeft = Math.ceil((end - now) / 1000);
@@ -190,62 +196,57 @@ function toggleTimer() {
 }
 
 function submit() {
-    resizeCanvas();
+    window.canv = strokes;
+    document.getElementById("game").hidden = true;
 }
 
+function genUUID() {
+    return ''+ Math.random().toString(36).substr(2, 10);
+  };
+
 function color(obj) {
-    switch (obj.id) {
-        case "green":
-            col = "green";
-            break;
-        case "blue":
-            col = "blue";
-            break;
-        case "red":
-            col = "red";
-            break;
-        case "yellow":
-            col = "yellow";
-            break;
-        case "orange":
-            col = "orange";
-            break;
-        case "lime":
-            col = "lime";
-            break;
-        case "hotpink":
-            col = "hotpink";
-            break;
-        case "purple":
-            col = "purple";
-            break;
-        case "aqua":
-            col = "aqua";
-            break;
-        case "black":
-            col = "black";
-            break;
-        case "white":
-            col = "white";
-            break;
+    col = obj.id;
+    document.getElementById('circle').style.background = col;
+    if(col=="white"){
+        document.getElementById('change').style.background = "rgb(210, 210, 210)";
+    }
+    else{
+        document.getElementById('change').style.background = "rgb(231, 231, 231)";
     }
 
 }
 
 function size(){
+    const circle = document.getElementById('circle');
     if(siz==2){
         siz=15;
-        document.getElementById('circle').style.width="13px";
-        document.getElementById('circle').style.height="13px";
+        circle.style.width="13px";
+        circle.style.height="13px";
+        circle.style.left="7px";
+        circle.style.top="7px";
     }
     else if(siz==15){
         siz=30;
-        document.getElementById('circle').style.width="25px";
-        document.getElementById('circle').style.height="25px";
+        circle.style.width="24px";
+        circle.style.height="24px";
+        circle.style.left="1px";
+        circle.style.top="1px";
     }
     else{
         siz=2;
-        document.getElementById('circle').style.width="7px";
-        document.getElementById('circle').style.height="7px";
+        circle.style.width="7px";
+        circle.style.height="7px";
+        circle.style.left="10px";
+        circle.style.top="10px";
     }
+}
+
+function trash(){
+    ctxDraw.canvas.width = ctxDraw.canvas.width+1;
+    ctxDraw.canvas.width = ctxDraw.canvas.width-1;
+    ctxDraw.fillStyle = "white";
+    ctxDraw.fillRect(0, 0, canvasDraw.width, canvasDraw.height);
+    strokes = null;
+    strokes = new StrokeStore();
+    resizeCanvas();
 }

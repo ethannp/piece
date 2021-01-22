@@ -1,26 +1,32 @@
-var firebaseConfig = {
+const firebaseConfig = {
     apiKey: "AIzaSyABCi0lM7c-fE5YE8_Dwk2UAXn7hoPo9Bw",
     authDomain: "square-piece.firebaseapp.com",
+    databaseURL: "https://square-piece-default-rtdb.firebaseio.com",
     projectId: "square-piece",
     storageBucket: "square-piece.appspot.com",
     messagingSenderId: "221464693855",
     appId: "1:221464693855:web:b6750b4c5d6462049b9fea",
     measurementId: "G-2ZZCSBQYQN"
-};
+  };
+var curUser, curName;
 $(function () {
     if (!firebase.apps.length) {
         firebase.initializeApp(firebaseConfig);
     }
     $('#github').click(loginGithub);
     $('#signout').click(signOut);
+    $('#savebtn').click(saveUser);
+    $('#submit').click(submitauth);
 
     firebase.auth().onAuthStateChanged(user => {
         if (user) {
+            curUser = user;
             try {
                 document.getElementById('login').hidden = true;
                 document.getElementById('account').hidden = false;
                 firebase.firestore().collection('users').doc(user.uid).get().then(doc => {
-                    document.getElementById('username').value = doc.data().username;
+                    curName = doc.data().username
+                    document.getElementById('username').value = curName;
                 })
                 document.getElementById('username').classList.add("touched");
             } catch (err) {}
@@ -30,18 +36,18 @@ $(function () {
                 }
             } catch (err) {}
             updatePFP(user.photoURL);
-            try{
-            document.getElementById('a-sign-in').innerHTML = "Account";
-            }
-            catch(err){}
+            try {
+                document.getElementById('a-sign-in').innerHTML = "Account";
+            } catch (err) {}
         } else {
+            curUser = null;
             try {
                 document.getElementById('login').hidden = false;
                 document.getElementById('account').hidden = true;
             } catch (err) {}
             try {
                 if (document.getElementById('play') != null) {
-                    window.location.replace("404.html")
+                    window.location.replace("nologin.html")
                 }
             } catch (err) {}
             updatePFP();
@@ -54,13 +60,11 @@ function loginGithub() {
     var provider = new firebase.auth.GithubAuthProvider();
     auth.signInWithPopup(provider).then(function (result) {
         return firebase.firestore().collection('users').doc(result.user.uid).set({
-            username: result.additionalUserInfo,
+            username: result.additionalUserInfo.username,
             pfp: result.user.photoURL
         });
-        //console.log(result);
-        //console.log(result.additionalUserInfo.profile);
-        //console.log(result.additionalUserInfo.username);
-    }).catch(function (error) {})
+    }).catch(function (error) {
+    })
 }
 
 function updatePFP(path) {
@@ -91,4 +95,34 @@ function updatePFP(path) {
 
 function signOut() {
     firebase.auth().signOut();
+}
+
+async function saveUser() {
+    if (document.getElementById("username").value != curName) {
+        try {
+            const ref = firebase.firestore().collection('users').doc(curUser.uid);
+            const res = await ref.set({
+                username: document.getElementById("username").value
+            }, {
+                merge: true
+            });
+            document.getElementById('saved').innerHTML = `Your username has been updated to ${document.getElementById("username").value}!`
+        } catch (err) {
+            console.log(err);
+        }
+    }
+}
+
+function submitauth(){
+    if(window.canv==-1){
+        setTimeout(submitauth, 100);
+        return;
+    }
+    //once loaded
+    const canvData = window.canv;
+    const dataJSON = JSON.stringify(canvData);
+    var compressed = LZString.compress(dataJSON);
+    //var string = LZString.decompress(compressed);
+    //const db = firebase.database();
+
 }

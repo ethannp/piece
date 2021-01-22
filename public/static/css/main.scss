@@ -73,6 +73,7 @@ p {
 
 .form {
     width: 30%;
+    min-width:200px;
     height: $width/5;
     overflow: hidden;
     position: relative;
@@ -228,10 +229,23 @@ canvas {
     cursor: pointer;
 }
 
-@media all and (max-width:30em) {
-    .button {
-        display: block;
-        margin: 0.4em auto;
+@media screen and (min-width:600px) {
+    #mobile {
+        visibility:hidden;
+        display:none;
+    }
+    #info {
+        visibility:visible;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    #mobile {
+        visibility:visible;
+        display:block;
+    }
+    #info {
+        visibility:hidden;
     }
 }
 

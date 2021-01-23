@@ -54,6 +54,10 @@ $(function () {
             try {
                 document.getElementById('a-sign-in').innerHTML = "Account";
             } catch (err) {}
+            try{
+                document.getElementById("loggedin").hidden=false;
+                document.getElementById("notloggedin").hidden=true;
+            }catch(err){}
         } else {
             curUser = null;
             try {
@@ -65,6 +69,10 @@ $(function () {
                     window.location.replace("nologin.html")
                 }
             } catch (err) {}
+            try{
+                document.getElementById("loggedin").hidden=true;
+                document.getElementById("notloggedin").hidden=false;
+            }catch(err){}
             updatePFP();
         }
     });

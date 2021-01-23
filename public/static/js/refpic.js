@@ -1,7 +1,7 @@
 const canvasRef = document.getElementById("refpic");
 const ctxRef = canvasRef.getContext("2d");
 var imgURL;
-var id = 5;
+var id = -1;
 $(function () {
   fbwait();
 });
@@ -39,6 +39,11 @@ const getPic = async (pid) => {
 async function refPic() {
   let allpics = await loadDB();
   let chosen = allpics[Math.floor(Math.random() * allpics.length)];
+  let avail = chosen.avail;
+  avail = avail.filter(function (element) {
+    return element !== undefined;
+  });
+  id = avail[Math.floor(Math.random() * avail.length)];
   let name = await getPic(chosen.key);
   window.picKey = chosen.key;
   window.id = id;
@@ -68,7 +73,7 @@ function resizePic() {
   img.addEventListener('load', function (e) {
     var h = img.height;
     var w = img.width;
-    ctxRef.drawImage(img, Math.floor(id / 5) * (w / 5), (id % 5) * (h / 5), w / 5, h / 5, 0, 0,canvasRef.width, canvasRef.height);
+    ctxRef.drawImage(img, Math.floor(id / 5) * (w / 5), (id % 5) * (h / 5), w / 5, h / 5, 0, 0, canvasRef.width, canvasRef.height);
   }, true);
   if (imgURL) {
     img.src = imgURL;

@@ -1,4 +1,3 @@
-import { stringify, parse } from 'zipson';
 const canvasDraw = document.getElementById("canvDraw");
 const ctxDraw = canvasDraw.getContext("2d");
 var time = 0;
@@ -216,7 +215,6 @@ function cancel() {
 
 async function confirm() {
     document.getElementById("after").hidden = true;
-    document.getElementById("submitted").hidden = false;
     const canvData = strokes;
     const dataJSON = JSON.stringify(canvData);
     var compressed = dataJSON.compress();
@@ -226,6 +224,9 @@ async function confirm() {
         data: compressed,
         user: window.curUser.uid
     });
+    const db = firebase.database();
+    db.ref("avail/" + picKey+"/"+thisid).remove();
+    document.getElementById("submitted").hidden = false;
 }
 
 function color(obj) {

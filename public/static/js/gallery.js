@@ -132,6 +132,9 @@ async function drawCanvases(artwork) {
     }
     let doc = await getAllPieceData(artwork.key);
     let users = await getAllUsers();
+    if(doc.length == 0){
+        document.getElementById("info").innerHTML = "No users have submitted pieces for this art yet. Go create one <a href=\"play.html\" class=\"link\">here</a>!";
+    }
     doc.forEach(val => {
         let speCanv = document.getElementById("canv" + val.id);
         let ctx = speCanv.getContext("2d");

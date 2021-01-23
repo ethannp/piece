@@ -82,9 +82,17 @@ function loginGithub() {
     const auth = firebase.auth();
     var provider = new firebase.auth.GithubAuthProvider();
     auth.signInWithPopup(provider).then(function (result) {
-        return firebase.firestore().collection('users').doc(result.user.uid).set({
-            username: result.additionalUserInfo.username,
-            pfp: result.user.photoURL
+        const ref = firebase.firestore().collection('users').doc(result.user.uid).get()
+        .then(docSnap => {
+            if(docSnap.exists){
+                return;
+            }
+            else{
+                return firebase.firestore().collection('users').doc(result.user.uid).set({
+                    username: result.additionalUserInfo.username,
+                    pfp: result.user.photoURL
+                });
+            }
         });
     }).catch(function (error) {})
 }

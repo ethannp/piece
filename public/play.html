@@ -7,6 +7,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/static/css/main.css">
+  <link rel="icon" type="image/png" href="/static/icon.png"/>
   <script>
     $(function () {
       $.getScript('/static/js/lz-string.js');
@@ -36,7 +37,7 @@
         <div id="info">
           <p>Once you push start, an empty canvas and the piece that you will draw will appear. Please try to recreate
             the image to the best of your ability! A countdown for 100 seconds will appear, and at the end of the timer,
-            your piece will automatically submit. There is no way to pause this timer!</p>
+            you will lose the ability to keep drawing. There is no way to pause this timer!</p>
           <p>You will have the option to change your brush size and color. Use the white color to erase.</p>
           <p>Drawing inappropriate or irrelevant content will get your account permanently banned.</p>
           <p>Are you ready?</p>
@@ -144,8 +145,7 @@
           </style>
           <br>
           <input type='checkbox' id="hidetimer">
-          <label for="hidetimer">Hide timer - your piece will still be automatically submitted at the end of the
-            time</label>
+          <label for="hidetimer">Hide timer</label>
           <h4 id="autosubmit">Your piece will be autosubmitted in 120 seconds.</h4>
         </div>
         <div id="after" hidden>

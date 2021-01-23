@@ -7,6 +7,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/static/css/main.css">
+  <link rel="icon" type="image/png" href="/static/icon.png"/>
   <script>
     $(function () {
       $(".sidebar").load("base.html", null, function () {
@@ -26,7 +27,12 @@
       <div class="sidebar"></div>
       <div class="content">
         <h1>About</h1>
-        <p>Made by fluff.</p>
+        <p>Made by Ethan.</p>
+        <br>
+        <h4>Why is there a timer?</h4>
+        <p>1. I liked the idea that you had pressure to submit a drawing, so you were more focused on getting the general idea of it rather than all the specifics.
+          <br>2. Firebase has limits on how large values can be (the data of each piece). To avoid any chance of hitting this limit, I have a cap of 120 seconds, plus the string compression, so even constant drawing should not hit the limit (as drawings are saved by paths, not pixels).
+        </p>
         <br>
         <h2>Credit</h2>
         <p>Idea from <a class="link" href="https://perpendicular.institute/puzzle/bonus/solution/" target="_blank">MIT Mystery Hunt's 'Bonus Puzzle'</a></p>

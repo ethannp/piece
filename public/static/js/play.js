@@ -184,7 +184,11 @@ function start() {
     var count = setInterval(function () {
         var now = new Date().getTime();
         var timeLeft = Math.ceil((end - now) / 1000);
-        timer.innerHTML = "Your piece will be autosubmitted in " + timeLeft + " seconds.";
+        timer.innerHTML = "You have " + timeLeft + " seconds left.";
+        if(timeLeft<0){
+            clearInterval(count);
+            submit();
+        }
     }, 1000);
 }
 

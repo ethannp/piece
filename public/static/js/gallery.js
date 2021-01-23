@@ -5,11 +5,82 @@ $(window).on("load resize ", function () {
     });
 }).resize();
 
-$(function () {
+var StrokeStore = function (stor, curr) {
+    if (stor === undefined && curr === undefined) {
+        this.store = [];
+        this.current = [];
+    } else {
+        this.store = stor;
+        this.current = curr;
+    }
+}
+
+StrokeStore.prototype.moveTo = function (x, y) {
+    if (this.current.length !== 0) {
+        this.store.push(this.current);
+        this.current = [];
+    }
+    this.current.push({
+        x: x,
+        y: y
+    });
+};
+
+StrokeStore.prototype.lineTo = function (x, y, color, size) {
+    this.current.push({
+        x: x,
+        y: y,
+        c: color,
+        s: size
+    });
+};
+
+StrokeStore.prototype.stroke = function (ctx) {
+    ctx.beginPath();
+    var color = "black";
+    var size = 2;
+    var count = 0;
+    ctx.lineCap = 'round';
+    this.store.forEach(function (line) {
+        scale = 100 / 400;
+        if (count == 0) {
+            color = line[1].c;
+            size = line[1].s;
+            ctx.strokeStyle = color;
+            ctx.lineWidth = size * scale;
+        }
+        if (color != line[1].color || size != line[1].size) {
+            ctx.stroke();
+            color = line[1].c;
+            size = line[1].s;
+            ctx.lineWidth = size * scale;
+            ctx.strokeStyle = color;
+            ctx.beginPath();
+        }
+        ctx.moveTo(line[0].x * scale, line[0].y * scale);
+        var pt;
+        pt = line[1];
+        ctx.lineTo(pt.x * scale, pt.y * scale);
+        count++;
+    }, this);
+    //this._stroke(this.current);
+    ctx.stroke();
+};
+
+function getParams(){
     const queryString = window.location.search;
     const params = (new URLSearchParams(queryString)).toString();
-    let go = params==="";
-    fbwait(go,params.substring(0,params.length-1));
+    return new Promise(resolve => {
+        setTimeout(() => {
+            resolve(params);
+        }, 200);
+    })
+}
+
+$(async function () {
+    let par = await getParams();
+    let go = par==="";
+    fbwait(go,par.substring(0,par.length-1));
 });
 
 function fbwait(go, params) {
@@ -27,7 +98,7 @@ function fbwait(go, params) {
 
 async function loadArt(slug){
     let allArt = JSON.parse(window.localStorage.getItem("art"));
-    if(allArt.length == 0){
+    if(allArt == null){
         let art = await readArt();
         window.localStorage.setItem("art", JSON.stringify(art));
         allArt = JSON.parse(window.localStorage.getItem("art"));
@@ -43,24 +114,48 @@ async function loadArt(slug){
         count++;
     });
     if(key===""){
-        window.location.replace("gallery.html");
+        //window.location.replace("gallery.html");
+        console.log(slug);
     }
     else{
         document.getElementById("all").hidden=true;
         document.getElementById("view").hidden=false;
         document.getElementById("title").innerHTML=allArt[index].artwork;
         document.getElementById("artist-h").innerHTML="Created by "+allArt[index].artist;
-        drawCanvases();
+        drawCanvases(allArt[index]);
     }
 }
 
-function drawCanvases(){
+async function drawCanvases(artwork){
     for(let i=0; i<25; i++){
         let canvas = document.getElementById("canv"+i);
         let ctx = canvas.getContext("2d");
         ctx.fillStyle = "white";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
+    let doc = await getAllPieceData(artwork.key);
+    doc.forEach(val => {
+        let speCanv = document.getElementById("canv"+val.id);
+        let ctx = speCanv.getContext("2d");
+        let compressed = val.data;
+        let decode = compressed.decompress();
+        let done = JSON.parse(decode);
+        var strokes = new StrokeStore(done.store, done.current);
+        strokes.stroke(ctx);
+    })
+}
+
+async function getAllPieceData(key){
+    const snap = await firebase.firestore().collection(key).get();
+    const docs = [];
+    snap.forEach(doc => {
+        docs.push({
+            id: doc.id,
+            data: doc.data().data,
+            user: doc.data().user
+        });
+    });
+    return docs;
 }
 
 async function loadTable() {
@@ -103,3 +198,97 @@ function readArt() {
         resolve(arts);
     });
 }
+
+
+
+
+
+String.prototype.compress = function (asArray) {
+	"use strict";
+	// Build the dictionary.
+	asArray = (asArray === true);
+	var i,
+		dictionary = {},
+		uncompressed = this,
+		c,
+		wc,
+		w = "",
+		result = [],
+		ASCII = '',
+		dictSize = 256;
+	for (i = 0; i < 256; i += 1) {
+		dictionary[String.fromCharCode(i)] = i;
+	}
+
+	for (i = 0; i < uncompressed.length; i += 1) {
+		c = uncompressed.charAt(i);
+		wc = w + c;
+		//Do not use dictionary[wc] because javascript arrays
+		//will return values for array['pop'], array['push'] etc
+	   // if (dictionary[wc]) {
+		if (dictionary.hasOwnProperty(wc)) {
+			w = wc;
+		} else {
+			result.push(dictionary[w]);
+			ASCII += String.fromCharCode(dictionary[w]);
+			// Add wc to the dictionary.
+			dictionary[wc] = dictSize++;
+			w = String(c);
+		}
+	}
+
+	// Output the code for w.
+	if (w !== "") {
+		result.push(dictionary[w]);
+		ASCII += String.fromCharCode(dictionary[w]);
+	}
+	return asArray ? result : ASCII;
+};
+
+String.prototype.decompress = function () {
+	"use strict";
+	// Build the dictionary.
+	var i, tmp = [],
+		dictionary = [],
+		compressed = this,
+		w,
+		result,
+		k,
+		entry = "",
+		dictSize = 256;
+	for (i = 0; i < 256; i += 1) {
+		dictionary[i] = String.fromCharCode(i);
+	}
+
+	if(compressed && typeof compressed === 'string') {
+		// convert string into Array.
+		for(i = 0; i < compressed.length; i += 1) {
+			tmp.push(compressed[i].charCodeAt(0));
+		}
+		compressed = tmp;
+		tmp = null;
+	}
+
+	w = String.fromCharCode(compressed[0]);
+	result = w;
+	for (i = 1; i < compressed.length; i += 1) {
+		k = compressed[i];
+		if (dictionary[k]) {
+			entry = dictionary[k];
+		} else {
+			if (k === dictSize) {
+				entry = w + w.charAt(0);
+			} else {
+				return null;
+			}
+		}
+
+		result += entry;
+
+		// Add w+entry[0] to the dictionary.
+		dictionary[dictSize++] = w + entry.charAt(0);
+
+		w = entry;
+	}
+	return result;
+};

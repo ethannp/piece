@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Piece | Gallery</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/main.css">
+  <script>
+    $(function () {
+      $(".sidebar").load("base.html", null, function () {
+        $.getScript('/static/js/pfp.js');
+        $.getScript('/static/js/auth.js');
+        $.getScript('/static/js/gallery.js');
+      });
+    });
+  </script>
+</head>
+
+<body>
+  <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-storage.js"></script>
+  <main>
+    <section class="glass">
+      <div class="sidebar"></div>
+      <div class="content">
+        <div id="all" style="overflow:auto; border-radius:4px">
+          <div class="tbl-header">
+            <table cellpadding="0" cellspacing="0" border="0">
+              <thead>
+                <tr>
+                  <th id="art" style="width:40%">Artwork</th>
+                  <th id="artist" style="width:40%"> Artist</th>
+                  <th id="completion" style="width:20%">Completion</th>
+                </tr>
+              </thead>
+            </table>
+          </div>
+          <div class="tbl-content" style="height:390px;">
+            <table id="hover">
+              <tbody id="artcontent">
+                <!--<tr>
+                  <td style="width:40%">Mona Lisa</td>
+                  <td style="width:40%">Leonardo da Vinci</td>
+                  <td style="width:20%">0/25</td>
+                </tr>-->
+
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div id="view" hidden>
+          <h1 id="title"></h1>
+          <h3 id="artist-h" style="margin-top:10px"></h3>
+          <p style="font-size:14px">Hover over a piece to see who it was created by!</p>
+          <br>
+          <div id="canvases">
+            <style>
+              canvas {
+                float: left;
+                margin: 0;
+                position: relative;
+              }
+            </style>
+            <div id="r1">
+              <canvas id="canv0" width=100 height=100></canvas>
+              <canvas id="canv1" width=100 height=100></canvas>
+              <canvas id="canv2" width=100 height=100></canvas>
+              <canvas id="canv3" width=100 height=100></canvas>
+              <canvas id="canv4" width=100 height=100></canvas>
+            </div>
+            <div id="r2">
+              <canvas id="canv5" width=100 height=100></canvas>
+              <canvas id="canv6" width=100 height=100></canvas>
+              <canvas id="canv7" width=100 height=100></canvas>
+              <canvas id="canv8" width=100 height=100></canvas>
+              <canvas id="canv9" width=100 height=100></canvas>
+            </div>
+            <div id="r3">
+              <canvas id="canv10" width=100 height=100></canvas>
+              <canvas id="canv11" width=100 height=100></canvas>
+              <canvas id="canv12" width=100 height=100></canvas>
+              <canvas id="canv13" width=100 height=100></canvas>
+              <canvas id="canv14" width=100 height=100></canvas>
+            </div>
+            <div id="r4">
+              <canvas id="canv15" width=100 height=100></canvas>
+              <canvas id="canv16" width=100 height=100></canvas>
+              <canvas id="canv17" width=100 height=100></canvas>
+              <canvas id="canv18" width=100 height=100></canvas>
+              <canvas id="canv19" width=100 height=100></canvas>
+
+            </div>
+            <div id="r5">
+              <canvas id="canv20" width=100 height=100></canvas>
+              <canvas id="canv21" width=100 height=100></canvas>
+              <canvas id="canv22" width=100 height=100></canvas>
+              <canvas id="canv23" width=100 height=100></canvas>
+              <canvas id="canv24" width=100 height=100></canvas>
+            </div>
+            <style>
+              #creator {
+                position:absolute;
+                width: 200px;
+                height: 75px;
+                background: red;
+                border-radius: 4px;
+                z-index: 50;
+              }
+            </style>
+            <div id="creator">
+              <p>s</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+
+</html>

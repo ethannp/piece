@@ -21,6 +21,7 @@
   <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-database.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-storage.js"></script>
   <main>
     <section class="glass">
@@ -79,7 +80,7 @@
             #butts {
               display: inline-block;
               width: 500px;
-              margin: -2.2px;
+              margin-top:-4px;
             }
 
             #wrap {
@@ -146,6 +147,26 @@
           <label for="hidetimer">Hide timer - your piece will still be automatically submitted at the end of the
             time</label>
           <h4 id="autosubmit">Your piece will be autosubmitted in 120 seconds.</h4>
+        </div>
+        <div id="after" hidden>
+          <br>
+          <h3>Here is your final work</h3>
+          <br>
+          <canvas id="final" width="400" height="400"></canvas>
+          <p>Would you like to submit?</p>
+          <a class="button" id="confirm">Confirm submit</a>
+          <a class="button" id="reset">Cancel and restart</a>
+        </div>
+
+        <div id="cancel" hidden>
+          <br>
+          <h3>Your piece was not submitted.</h3>
+          <p>Refresh this page to try again, or go <a class="link" href="/">back home</a>.</p>
+        </div>
+        <div id="submitted" hidden>
+          <br>
+          <h3>Your piece was submitted!</h3>
+          <p>Check out the <a class="link" href="/gallery.html">Gallery</a> to see your creation.</p>
         </div>
       </div>
     </section>

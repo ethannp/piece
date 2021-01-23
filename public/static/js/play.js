@@ -11,7 +11,7 @@ var flag = false,
 var data, scale;
 
 var col = "black",
-    siz = 2;
+    siz = 3;
 
 var StrokeStore = function (stor, curr) {
     if (stor === undefined && curr === undefined) {
@@ -44,35 +44,35 @@ StrokeStore.prototype.lineTo = function (x, y, color, size) {
 };
 
 StrokeStore.prototype.stroke = function (ctx) {
-    ctxDraw.beginPath();
+    ctx.beginPath();
     var color = "black";
     var size = 2;
     var count = 0;
-    ctxDraw.lineCap='round';
+    ctx.lineCap = 'round';
     this.store.forEach(function (line) {
         scale = canvasDraw.width / 400;
         if (count == 0) {
             color = line[1].c;
             size = line[1].s;
-            ctxDraw.strokeStyle = color;
-            ctxDraw.lineWidth = size * scale;
+            ctx.strokeStyle = color;
+            ctx.lineWidth = size * scale;
         }
         if (color != line[1].color || size != line[1].size) {
-            ctxDraw.stroke();
+            ctx.stroke();
             color = line[1].c;
             size = line[1].s;
-            ctxDraw.lineWidth = size * scale;
-            ctxDraw.strokeStyle = color;
-            ctxDraw.beginPath();
+            ctx.lineWidth = size * scale;
+            ctx.strokeStyle = color;
+            ctx.beginPath();
         }
-        ctxDraw.moveTo(line[0].x * scale, line[0].y * scale);
+        ctx.moveTo(line[0].x * scale, line[0].y * scale);
         var pt;
         pt = line[1];
-        ctxDraw.lineTo(pt.x * scale, pt.y * scale);
+        ctx.lineTo(pt.x * scale, pt.y * scale);
         count++;
     }, this);
     //this._stroke(this.current);
-    ctxDraw.stroke();
+    ctx.stroke();
 };
 
 var strokes = new StrokeStore();
@@ -81,7 +81,9 @@ $(function () {
     $('#start').click(start);
     $('#hidetimer').click(toggleTimer);
     $('#submit').click(submit);
-    window.canv=-1;
+    $('#confirm').click(confirm);
+    $('#reset').click(cancel);
+    window.canv = -1;
     canvDraw();
 });
 
@@ -129,8 +131,8 @@ function redraw() {
 
 function draw() {
     scale = canvasDraw.width / 400;
-    ctxDraw.lineCap='round';
-    ctxDraw.lineWidth =siz * scale;
+    ctxDraw.lineCap = 'round';
+    ctxDraw.lineWidth = siz * scale;
     ctxDraw.beginPath();
     ctxDraw.moveTo(prevX, prevY);
     ctxDraw.lineTo(currX, currY);
@@ -196,54 +198,72 @@ function toggleTimer() {
 }
 
 function submit() {
-    window.canv = strokes;
     document.getElementById("game").hidden = true;
+    document.getElementById("after").hidden = false;
+    ctxDraw.canvas.width = 400;
+    ctxDraw.canvas.height = 400;
+    let context = document.getElementById("final").getContext("2d");
+    context.fillStyle = "white";
+    context.fillRect(0, 0, canvasDraw.width, canvasDraw.height);
+    strokes.stroke(context);
 }
 
-function genUUID() {
-    return ''+ Math.random().toString(36).substr(2, 10);
-  };
+function cancel() {
+    document.getElementById("after").hidden = true;
+    document.getElementById("cancel").hidden = false;
+}
+
+async function confirm() {
+    document.getElementById("after").hidden = true;
+    document.getElementById("submitted").hidden = false;
+    const canvData = strokes;
+    const dataJSON = JSON.stringify(canvData);
+    var compressed = LZString.compress(dataJSON);
+    const picKey = window.picKey + "";
+    const thisid = window.id + "";
+    /*firebase.firestore().collection(picKey).doc(thisid).set({
+        data: compressed,
+        user: window.curUser.uid
+    });*/
+}
 
 function color(obj) {
     col = obj.id;
     document.getElementById('circle').style.background = col;
-    if(col=="white"){
+    if (col == "white") {
         document.getElementById('change').style.background = "rgb(210, 210, 210)";
-    }
-    else{
+    } else {
         document.getElementById('change').style.background = "rgb(231, 231, 231)";
     }
 
 }
 
-function size(){
+function size() {
     const circle = document.getElementById('circle');
-    if(siz==2){
-        siz=15;
-        circle.style.width="13px";
-        circle.style.height="13px";
-        circle.style.left="7px";
-        circle.style.top="7px";
-    }
-    else if(siz==15){
-        siz=30;
-        circle.style.width="24px";
-        circle.style.height="24px";
-        circle.style.left="1px";
-        circle.style.top="1px";
-    }
-    else{
-        siz=2;
-        circle.style.width="7px";
-        circle.style.height="7px";
-        circle.style.left="10px";
-        circle.style.top="10px";
+    if (siz == 3) {
+        siz = 17;
+        circle.style.width = "13px";
+        circle.style.height = "13px";
+        circle.style.left = "7px";
+        circle.style.top = "7px";
+    } else if (siz == 17) {
+        siz = 35;
+        circle.style.width = "24px";
+        circle.style.height = "24px";
+        circle.style.left = "1px";
+        circle.style.top = "1px";
+    } else {
+        siz = 3;
+        circle.style.width = "7px";
+        circle.style.height = "7px";
+        circle.style.left = "10px";
+        circle.style.top = "10px";
     }
 }
 
-function trash(){
-    ctxDraw.canvas.width = ctxDraw.canvas.width+1;
-    ctxDraw.canvas.width = ctxDraw.canvas.width-1;
+function trash() {
+    ctxDraw.canvas.width = ctxDraw.canvas.width + 1;
+    ctxDraw.canvas.width = ctxDraw.canvas.width - 1;
     ctxDraw.fillStyle = "white";
     ctxDraw.fillRect(0, 0, canvasDraw.width, canvasDraw.height);
     strokes = null;

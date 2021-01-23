@@ -1,18 +1,48 @@
 const canvasRef = document.getElementById("refpic");
 const ctxRef = canvasRef.getContext("2d");
 var imgURL;
-var x=4;
-var y=4;
+var id = 5;
 $(function () {
-    refPic();
+  fbwait();
 });
 
-function refPic(){
-  if(firebase.apps.length === 0){
-    setTimeout(refPic, 100);
+function fbwait() {
+  if (firebase.apps.length === 0) {
+    setTimeout(fbwait, 100);
     return;
+  } //wait until firebase is init
+  refPic();
 }
-  var storageRef = firebase.storage().ref("images/lisa.png");
+
+function loadDB() {
+  const db = firebase.database();
+  let pics = [];
+
+  return new Promise(async function (resolve, reject) {
+    const snap = await db.ref("avail/").once("value");
+    snap.forEach(function (childSnap) {
+      pics.push({
+        key: childSnap.key,
+        avail: childSnap.val()
+      });
+    });
+    resolve(pics);
+  });
+}
+
+const getPic = async (pid) => {
+  const db = firebase.database();
+  const snap = await db.ref("pieces/" + pid).once("value");
+  return snap.node_.value_;
+}
+
+async function refPic() {
+  let allpics = await loadDB();
+  let chosen = allpics[Math.floor(Math.random() * allpics.length)];
+  let name = await getPic(chosen.key);
+  window.picKey = chosen.key;
+  window.id = id;
+  var storageRef = firebase.storage().ref("images/" + name);
   window.addEventListener('resize', resizePic, false);
   storageRef.getDownloadURL().then(function (url) {
     imgURL = url;
@@ -38,7 +68,7 @@ function resizePic() {
   img.addEventListener('load', function (e) {
     var h = img.height;
     var w = img.width;
-    ctxRef.drawImage(this, x * (w/5), y * (w/5), w/5, h/5 ,0, 0, canvasRef.width, canvasRef.height);
+    ctxRef.drawImage(img, Math.floor(id / 5) * (w / 5), (id % 5) * (h / 5), w / 5, h / 5, 0, 0,canvasRef.width, canvasRef.height);
   }, true);
   if (imgURL) {
     img.src = imgURL;

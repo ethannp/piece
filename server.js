@@ -34,6 +34,9 @@ app.get("/account", function (req, res) {
 app.get("/play", function (req, res) {
     res.render("play.html");
 });
+app.get("/gallery", function (req, res) {
+    res.render("gallery.html");
+});
 app.use(function (req, res, next) {
     res.render("../public/404.html");
 });

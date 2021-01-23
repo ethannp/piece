@@ -7,8 +7,24 @@ const firebaseConfig = {
     messagingSenderId: "221464693855",
     appId: "1:221464693855:web:b6750b4c5d6462049b9fea",
     measurementId: "G-2ZZCSBQYQN"
-  };
-var curUser, curName;
+};
+var curUser, curName, pfp;
+
+const getUser = async (user) => {
+    const dbref = firebase.firestore().collection('users').doc(user.uid).get();
+    const doc = await dbref;
+    return doc;
+}
+
+async function read(user) {
+    const doc = await getUser(user);
+    curName = doc.data().username;
+    try {
+        document.getElementById('username').value = curName;
+    } catch (err) {}
+    pfp = doc.data().pfp;
+    updatePFP(pfp);
+}
 $(function () {
     if (!firebase.apps.length) {
         firebase.initializeApp(firebaseConfig);
@@ -16,18 +32,18 @@ $(function () {
     $('#github').click(loginGithub);
     $('#signout').click(signOut);
     $('#savebtn').click(saveUser);
-    $('#submit').click(submitauth);
 
     firebase.auth().onAuthStateChanged(user => {
         if (user) {
             curUser = user;
+            window.curUser = curUser;
+            read(user);
+            try {
+                document.getElementById('username').value = curName;
+            } catch (err) {}
             try {
                 document.getElementById('login').hidden = true;
                 document.getElementById('account').hidden = false;
-                firebase.firestore().collection('users').doc(user.uid).get().then(doc => {
-                    curName = doc.data().username
-                    document.getElementById('username').value = curName;
-                })
                 document.getElementById('username').classList.add("touched");
             } catch (err) {}
             try {
@@ -35,7 +51,6 @@ $(function () {
                     document.getElementById('play').hidden = false;
                 }
             } catch (err) {}
-            updatePFP(user.photoURL);
             try {
                 document.getElementById('a-sign-in').innerHTML = "Account";
             } catch (err) {}
@@ -63,8 +78,7 @@ function loginGithub() {
             username: result.additionalUserInfo.username,
             pfp: result.user.photoURL
         });
-    }).catch(function (error) {
-    })
+    }).catch(function (error) {})
 }
 
 function updatePFP(path) {
@@ -107,22 +121,10 @@ async function saveUser() {
                 merge: true
             });
             document.getElementById('saved').innerHTML = `Your username has been updated to ${document.getElementById("username").value}!`
-        } catch (err) {
-            console.log(err);
-        }
+        } catch (err) {}
     }
 }
 
-function submitauth(){
-    if(window.canv==-1){
-        setTimeout(submitauth, 100);
-        return;
-    }
-    //once loaded
-    const canvData = window.canv;
-    const dataJSON = JSON.stringify(canvData);
-    var compressed = LZString.compress(dataJSON);
-    //var string = LZString.decompress(compressed);
-    //const db = firebase.database();
-
-}
+function genUUID() {
+    return '' + Math.random().toString(36).substr(2, 10);
+};

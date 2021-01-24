@@ -36,7 +36,7 @@ function upload() {
         storageref.put(file);
         //file placed
         var rdb = firebase.database();
-        let pid = "n92dchqqe8";//genUUID();
+        let pid = genUUID();
         rdb.ref("/pieces/" + pid).set(file.name);
         rdb.ref("/pieces-info/" + pid).set({
             artist: artistn,

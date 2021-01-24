@@ -83,6 +83,7 @@ $(function () {
     $('#submit').click(submit);
     $('#confirm').click(confirm);
     $('#reset').click(cancel);
+    $('#resizeWindow').click(resizeCanvas);
     window.canv = -1;
     canvDraw();
 });
@@ -180,7 +181,7 @@ function start() {
     document.getElementById("info").hidden = true;
     document.getElementById("game").hidden = false;
     const timer = document.getElementById("autosubmit");
-    var end = Date.now() + 120000;
+    var end = Date.now() + 150000;
     var count = setInterval(function () {
         var now = new Date().getTime();
         var timeLeft = Math.ceil((end - now) / 1000);

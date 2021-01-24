@@ -1,19 +1,17 @@
 <!DOCTYPE html>
-<html>
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Piece | Gallery</title>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet" />
   <script type="module" src="https://cdn.jsdelivr.net/npm/zipson@latest/dist/zipson.min.js"></script>
   <link rel="stylesheet" href="/static/css/main.css">
-  <link rel="icon" type="image/png" href="/static/icon.png"/>
+  <link rel="icon" type="image/png" href="/static/icon.png">
   <script>
     $(function () {
       $(".sidebar").load("base.html", null, function () {
-        $.getScript('/static/js/lz-string.js');
         $.getScript('/static/js/pfp.js');
         $.getScript('/static/js/auth.js');
         $.getScript('/static/js/gallery.js');
@@ -121,8 +119,8 @@
                 background: rgba(255, 255, 255, 0.6);
                 border-radius: 4px;
                 z-index: 50;
-                display:flex;
-                align-items:center;
+                display: flex;
+                align-items: center;
               }
             </style>
             <div id="creator">
@@ -136,7 +134,7 @@
                 #artist-art {
                   display: inline-block;
                   vertical-align: middle;
-                  margin-left:5px;
+                  margin-left: 5px;
                   font-size: 20px;
                 }
               </style>

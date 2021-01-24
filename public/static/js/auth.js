@@ -9,6 +9,7 @@ const firebaseConfig = {
     measurementId: "G-2ZZCSBQYQN"
 };
 var curUser, curName, pfp;
+var file;
 
 const getUser = async (user) => {
     const dbref = firebase.firestore().collection('users').doc(user.uid).get();
@@ -25,6 +26,37 @@ async function read(user) {
     pfp = doc.data().pfp;
     updatePFP(pfp);
 }
+
+function upload() {
+    let sl = document.getElementById('slug').value;
+    let artistn = document.getElementById('artistname').value;
+    let artw = document.getElementById('artworkname').value;
+    if (slug != "" && artistn != "" && artw != "") {
+        var storageref = firebase.storage().ref('/images/' + file.name);
+        storageref.put(file);
+        //file placed
+        var rdb = firebase.database();
+        let pid = "n92dchqqe8";//genUUID();
+        rdb.ref("/pieces/" + pid).set(file.name);
+        rdb.ref("/pieces-info/" + pid).set({
+            artist: artistn,
+            artwork: artw,
+            slug: sl
+        });
+        let nums = [];
+        for (let i = 0; i < 25; i++) {
+            nums.push(i);
+        }
+        console.log(nums);
+        rdb.ref("/avail/" + pid).set(nums);
+        //realtime db updated
+        document.getElementById('slug').value = "";
+        document.getElementById('artistname').value = "";
+        document.getElementById('artworkname').value = "";
+        document.getElementById('final').innerHTML = "File " + file.name + " was uploaded!";
+    } //[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]
+}
+
 $(function () {
     if (!firebase.apps.length) {
         firebase.initializeApp(firebaseConfig);
@@ -40,6 +72,18 @@ $(function () {
                 if (document.getElementById("admincheck") != null) {
                     if (user.uid != "IeG7cIheRNS8N6J4r4Xn9Gj2FmX2") {
                         window.location.replace("404.html");
+                    } else {
+                        document.getElementById("filebtn").addEventListener('change', function (e) {
+                            file = e.target.files[0];
+                        });
+                        $('#submitpiece').click(upload);
+                    }
+                }
+            } catch (err) {}
+            try {
+                if (document.getElementById("adminc") != null) {
+                    if (user.uid == "IeG7cIheRNS8N6J4r4Xn9Gj2FmX2") {
+                        document.getElementById("adminc").hidden = false;
                     }
                 }
             } catch (err) {}

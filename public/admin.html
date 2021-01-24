@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/main.css" />
     <link rel="icon" type="image/png" href="/static/icon.png" />
 </head>
 
@@ -14,6 +14,8 @@
     <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-storage.js"></script>
     <main>
         <section class="glass">
             <style>
@@ -23,37 +25,40 @@
             </style>
             <div id="content">
                 <h1>Admin</h1>
-                <h2>Create new piece</h2>
-                <button>Upload image</button>
+                <h3>Create new piece</h3>
+                <br>
+                <input type="file" value="upload" id="filebtn" />
                 <div class="form">
-                    <input type="text" class="field-input" id="slug" required autocomplete="off" maxlength="20"
+                    <input type="text" class="field-input" id="slug" required autocomplete="off" maxlength="50"
                         pattern="[a-zA-Z0-9 ]+">
                     <label id="field-label" for="slug">Slug</label>
                     <div class="bar"></div>
                 </div>
                 <div class="form">
-                    <input type="text" class="field-input" id="name" required autocomplete="off" maxlength="20"
-                        pattern="[a-zA-Z0-9 ]+">
-                    <label id="field-label" for="name">Image name</label>
-                    <div class="bar"></div>
-                </div>
-                <div class="form">
-                    <input type="text" class="field-input" id="artistname" required autocomplete="off" maxlength="20"
+                    <input type="text" class="field-input" id="artistname" required autocomplete="off" maxlength="50"
                         pattern="[a-zA-Z0-9 ]+">
                     <label id="field-label" for="artistname">Artist</label>
                     <div class="bar"></div>
                 </div>
                 <div class="form">
-                    <input type="text" class="field-input" id="artworkname" required autocomplete="off" maxlength="20"
+                    <input type="text" class="field-input" id="artworkname" required autocomplete="off" maxlength="50"
                         pattern="[a-zA-Z0-9 ]+">
                     <label id="field-label" for="artworkname">Artwork name</label>
                     <div class="bar"></div>
                 </div>
+                <a class="button" id="submitpiece">Submit</a>
+                <p id="final"></p>
+                <a class="button" href="/">Go back home</a>
             </div>
         </section>
     </main>
     <div id="admincheck"></div>
     <script src="/static/js/auth.js" defer></script>
+    <script>
+        $(':required').one('blur keydown', function () {
+            $(this).addClass('touched');
+        });
+    </script>
 </body>
 
 </html>

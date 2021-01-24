@@ -200,84 +200,74 @@ async function getAllPieceData(key) {
     });
     return docs;
 }
-
-async function doArt(callback) {
-    readArt(function (art) {
-        window.localStorage.setItem("art", JSON.stringify(art));
-        let artF = [];
-        for (const key in art) {
-            getNum(art[key].key, function (num) {
-                artF.push({
-                    artwork: art[key].artwork,
-                    artist: art[key].artist,
-                    num: 25 - num,
-                    slug: art[key].slug,
-                    key: art[key].key
-                });
-                if (key == art.length - 1) {
-                    callback(artF);
-                }
-            });
-        }
-    });
+async function doArt() {
+    const art = await readArt();
+    let artF = [];
+    for (const key in art) {
+        const num = await getNum(art[key]["key"]);
+        artF.push({
+            artwork: art[key].artwork,
+            artist: art[key].artist,
+            num: 25 - num,
+            slug: art[key].slug,
+            key: art[key].key
+        });
+    }
+    return artF;
 }
 
-async function getNum(k, callback) {
+async function getNum(k) {
     const db = firebase.database();
     let arr = [];
-    let nums = []
-    let ref = db.ref("avail/" + k);
-    ref.once("value", function (snap) {
-        for (const key in snap.val()) {
-            arr.push(snap.val()[key]);
-        }
-        nums = arr.filter(function (element) {
-            return element !== undefined;
-        });
-        callback(nums.length);
+    const snap = await db.ref("avail/" + k).once("value");
+    snap.forEach(function (childSnap) {
+        arr.push(childSnap.val());
     });
+    return arr.filter(i => i !== undefined).length;
 }
 
 async function loadTable() {
-    doArt(function (artFix) {
-        const tab = document.getElementById("artcontent");
-        artFix.sort((a, b) => (a.num < b.num) ? 1 : (a.num === b.num) ? ((a.artwork > b.artwork) ? 1 : -1) : -1);
-        artFix.forEach(function (ele) {
-            let td1 = document.createElement("td");
-            td1.innerHTML = ele.artwork;
-            td1.setAttribute("style", "width:40%;")
-            let td2 = document.createElement("td");
-            td2.innerHTML = ele.artist;
-            td2.setAttribute("style", "width:40%;")
-            let td3 = document.createElement("td");
-            td3.innerHTML = ele.num + "/25";
-            td3.setAttribute("style", "width:20%;")
-            let trmain = document.createElement("tr");
-            trmain.setAttribute("onclick", "window.location=\"gallery.html?" + ele.slug + "\"")
-            trmain.appendChild(td1);
-            trmain.appendChild(td2);
-            trmain.appendChild(td3);
-            tab.appendChild(trmain);
-        })
-    });
+    let artFix = await doArt();
+    console.log(artFix);
+    const tab = document.getElementById("artcontent");
+    artFix.sort((a, b) => (a.num < b.num) ? 1 : (a.num === b.num) ? ((a.artwork > b.artwork) ? 1 : -1) : -1);
+    artFix.forEach(function (ele) {
+        let td1 = document.createElement("td");
+        td1.innerHTML = ele.artwork;
+        td1.setAttribute("style", "width:40%;")
+        let td2 = document.createElement("td");
+        td2.innerHTML = ele.artist;
+        td2.setAttribute("style", "width:40%;")
+        let td3 = document.createElement("td");
+        td3.innerHTML = ele.num + "/25";
+        td3.setAttribute("style", "width:20%;")
+        let trmain = document.createElement("tr");
+        trmain.setAttribute("onclick", "window.location=\"gallery.html?" + ele.slug + "\"")
+        trmain.appendChild(td1);
+        trmain.appendChild(td2);
+        trmain.appendChild(td3);
+        tab.appendChild(trmain);
+    })
+
 }
 
-async function readArt(callback) {
-    const db = firebase.database();
+async function readArt() {
+    const db = firebase.database().ref("pieces-info/");
     let arts = [];
-    let ref = db.ref("pieces-info/");
-    ref.once("value", function (snap) {
-        for (const key in snap.val()) {
-            arts.push({
-                key: key,
-                artist: snap.val()[key].artist,
-                artwork: snap.val()[key].artwork,
-                slug: snap.val()[key].slug
-            });
-        };
-        callback(arts);
-    });
+    let snap = await db.once("value");
+    let value = snap.val();
+    console.log(value);
+    for (const key in value) {
+        arts.push({
+            key: key,
+            artist: value[key].artist,
+            artwork: value[key].artwork,
+            slug: value[key].slug
+        })
+    }
+    return arts;
 }
+
 
 
 

@@ -30,11 +30,19 @@ $(function () {
         firebase.initializeApp(firebaseConfig);
     }
     $('#github').click(loginGithub);
+    $('#google').click(loginGoogle);
     $('#signout').click(signOut);
     $('#savebtn').click(saveUser);
 
     firebase.auth().onAuthStateChanged(user => {
         if (user) {
+            try {
+                if (document.getElementById("admincheck") != null) {
+                    if (user.uid != "IeG7cIheRNS8N6J4r4Xn9Gj2FmX2") {
+                        window.location.replace("404.html");
+                    }
+                }
+            } catch (err) {}
             curUser = user;
             window.curUser = curUser;
             read(user);
@@ -54,11 +62,16 @@ $(function () {
             try {
                 document.getElementById('a-sign-in').innerHTML = "Account";
             } catch (err) {}
-            try{
-                document.getElementById("loggedin").hidden=false;
-                document.getElementById("notloggedin").hidden=true;
-            }catch(err){}
+            try {
+                document.getElementById("loggedin").hidden = false;
+                document.getElementById("notloggedin").hidden = true;
+            } catch (err) {}
         } else {
+            try {
+                if (document.getElementById("admincheck") != null) {
+                    window.location.replace("404.html");
+                }
+            } catch (err) {}
             curUser = null;
             try {
                 document.getElementById('login').hidden = false;
@@ -69,10 +82,10 @@ $(function () {
                     window.location.replace("nologin.html")
                 }
             } catch (err) {}
-            try{
-                document.getElementById("loggedin").hidden=true;
-                document.getElementById("notloggedin").hidden=false;
-            }catch(err){}
+            try {
+                document.getElementById("loggedin").hidden = true;
+                document.getElementById("notloggedin").hidden = false;
+            } catch (err) {}
             updatePFP();
         }
     });
@@ -83,18 +96,35 @@ function loginGithub() {
     var provider = new firebase.auth.GithubAuthProvider();
     auth.signInWithPopup(provider).then(function (result) {
         const ref = firebase.firestore().collection('users').doc(result.user.uid).get()
-        .then(docSnap => {
-            if(docSnap.exists){
-                return;
-            }
-            else{
-                return firebase.firestore().collection('users').doc(result.user.uid).set({
-                    username: result.additionalUserInfo.username,
-                    pfp: result.user.photoURL
-                });
-            }
-        });
+            .then(docSnap => {
+                if (docSnap.exists) {
+                    return;
+                } else {
+                    return firebase.firestore().collection('users').doc(result.user.uid).set({
+                        username: result.additionalUserInfo.username,
+                        pfp: result.user.photoURL
+                    });
+                }
+            });
     }).catch(function (error) {})
+}
+
+function loginGoogle() {
+    const auth = firebase.auth();
+    var provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider).then(function (result) {
+        const ref = firebase.firestore().collection('users').doc(result.user.uid).get()
+            .then(docSnap => {
+                if (docSnap.exists) {
+                    return;
+                } else {
+                    return firebase.firestore().collection('users').doc(result.user.uid).set({
+                        username: ((result.user.email.match(/([^@]+)/))[0]).replace(/[^0-9a-zA-Z]/g, ''),
+                        pfp: result.user.photoURL
+                    });
+                }
+            });
+    });
 }
 
 function updatePFP(path) {

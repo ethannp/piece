@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+
+<head>
+    <title>Piece | Admin</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="icon" type="image/png" href="/static/icon.png" />
+</head>
+
+<body>
+    <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-firestore.js"></script>
+    <main>
+        <section class="glass">
+            <style>
+                #content{
+                    padding-left:10px;
+                }
+            </style>
+            <div id="content">
+                <h1>Admin</h1>
+                <h2>Create new piece</h2>
+                <button>Upload image</button>
+                <div class="form">
+                    <input type="text" class="field-input" id="slug" required autocomplete="off" maxlength="20"
+                        pattern="[a-zA-Z0-9 ]+">
+                    <label id="field-label" for="slug">Slug</label>
+                    <div class="bar"></div>
+                </div>
+                <div class="form">
+                    <input type="text" class="field-input" id="name" required autocomplete="off" maxlength="20"
+                        pattern="[a-zA-Z0-9 ]+">
+                    <label id="field-label" for="name">Image name</label>
+                    <div class="bar"></div>
+                </div>
+                <div class="form">
+                    <input type="text" class="field-input" id="artistname" required autocomplete="off" maxlength="20"
+                        pattern="[a-zA-Z0-9 ]+">
+                    <label id="field-label" for="artistname">Artist</label>
+                    <div class="bar"></div>
+                </div>
+                <div class="form">
+                    <input type="text" class="field-input" id="artworkname" required autocomplete="off" maxlength="20"
+                        pattern="[a-zA-Z0-9 ]+">
+                    <label id="field-label" for="artworkname">Artwork name</label>
+                    <div class="bar"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <div id="admincheck"></div>
+    <script src="/static/js/auth.js" defer></script>
+</body>
+
+</html>

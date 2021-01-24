@@ -37,6 +37,9 @@ app.get("/play", function (req, res) {
 app.get("/gallery", function (req, res) {
     res.render("gallery.html");
 });
+app.get("/admin", function (req, res) {
+    res.render("admin.html");
+});
 app.use(function (req, res, next) {
     res.render("../public/404.html");
 });
